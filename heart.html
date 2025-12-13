@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Cardiology AI - Heart Analysis Dashboard</title>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.015);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --glass-hover: rgba(255, 255, 255, 0.03);
+            --primary-gradient: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            --accent-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+            --success-gradient: linear-gradient(135deg, #06ffa5 0%, #00d4ff 100%);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --backdrop-blur: blur(30px);
+            --font-scale: 1;
+            --bg-color: #000000;
+            --primary-color: #00d4ff;
+            --accent-color: #ff006e;
+            --card-bg: rgba(0, 0, 0, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --hover-bg: rgba(255, 255, 255, 0.03);
+        }
+
+        /* WHITE THEME */
+        body.theme-white {
+            --glass-bg: rgba(255, 255, 255, 0.8);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            --glass-hover: rgba(0, 0, 0, 0.05);
+            --text-primary: rgba(0, 0, 0, 0.95);
+            --text-secondary: rgba(0, 0, 0, 0.7);
+            --text-muted: rgba(0, 0, 0, 0.5);
+            --bg-color: #f5f5f5;
+            --primary-color: #0099ff;
+            --accent-color: #ff006e;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --hover-bg: rgba(0, 0, 0, 0.05);
+        }
+
+        /* EYE CARE THEME (Warm colors) */
+        body.theme-eyecare {
+            --glass-bg: rgba(42, 35, 25, 0.8);
+            --glass-border: rgba(255, 200, 150, 0.2);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --glass-hover: rgba(255, 200, 150, 0.1);
+            --text-primary: rgba(255, 235, 205, 0.95);
+            --text-secondary: rgba(255, 220, 180, 0.8);
+            --text-muted: rgba(255, 200, 150, 0.6);
+            --bg-color: #2a1a0a;
+            --primary-color: #ffb366;
+            --accent-color: #ff8c42;
+            --card-bg: rgba(42, 35, 25, 0.8);
+            --border-color: rgba(255, 200, 150, 0.2);
+            --hover-bg: rgba(255, 200, 150, 0.1);
+            --primary-gradient: linear-gradient(135deg, #ffb366 0%, #ff8c42 100%);
+            --accent-gradient: linear-gradient(135deg, #ff8c42 0%, #d97038 100%);
+            --success-gradient: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+        }
+
+        /* BLACK THEME (Default) */
+        body.theme-black {
+            --glass-bg: rgba(255, 255, 255, 0.015);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --glass-hover: rgba(255, 255, 255, 0.03);
+            --text-primary: rgba(255, 255, 255, 0.95);
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --bg-color: #000000;
+            --primary-color: #00d4ff;
+            --accent-color: #ff006e;
+            --card-bg: rgba(0, 0, 0, 0.7);
+            --border-color: rgba(255, 255, 255, 0.08);
+            --hover-bg: rgba(255, 255, 255, 0.03);
+            --primary-gradient: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+            --accent-gradient: linear-gradient(135deg, #ff006e 0%, #8338ec 100%);
+            --success-gradient: linear-gradient(135deg, #06ffa5 0%, #00d4ff 100%);
+        }
+
+        html, body { 
+            height: 100%; 
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg-color);
+            color: var(--text-primary);
+            font-size: calc(14px * var(--font-scale));
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        /* Full Background */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--bg-color);
+            z-index: -2;
+            transition: background-color 0.4s ease;
+        }
+
+        a { text-decoration: none; color: inherit; }
+
+        /* ===== GLASSMORPHIC COMPONENTS ===== */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: var(--backdrop-blur) saturate(180%);
+            -webkit-backdrop-filter: var(--backdrop-blur) saturate(180%);
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass:hover {
+            background: var(--glass-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+        }
+
+        /* ===== TOP BAR ===== */
+        .gov-topbar {
+            position: sticky;
+            top: 0;
+            z-index: 1200;
+            padding: 10px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--card-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--glass-shadow);
+            transition: all 0.4s ease;
+        }
+
+        .gov-topbar-left { 
+            display: flex; 
+            align-items: center; 
+            gap: 14px; 
+        }
+
+        .gov-emblem {
+            width: 55px;
+            height: 55px;
+            border-radius: 8px;
+            background: var(--bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .gov-emblem img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(1.1) contrast(1.2) drop-shadow(0 0 10px rgba(218, 165, 32, 0.6));
+            mix-blend-mode: screen;
+        }
+
+        body.theme-white .gov-emblem img {
+            filter: brightness(1) contrast(1.1) drop-shadow(0 0 5px rgba(0, 0, 0, 0.2));
+            mix-blend-mode: normal;
+        }
+
+        .gov-topbar-text { 
+            display: flex; 
+            flex-direction: column; 
+        }
+
+        .gov-topbar-text span:first-child {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .gov-topbar-text span:last-child {
+            font-size: 1rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gov-topbar-right { 
+            font-size: 0.85rem; 
+            color: var(--text-secondary); 
+            font-weight: 500;
+        }
+
+        /* ===== APP HEADER ===== */
+        .app-header {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-bottom: 1px solid var(--border-color);
+            padding: 28px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .app-header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-title {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--primary-color) 50%, var(--primary-color) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .app-subtitle {
+            font-size: 1.05rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            font-weight: 400;
+        }
+
+        /* ===== RUNNING NOTICE ===== */
+        .running-notice {
+            background: var(--accent-gradient);
+            padding: 12px 24px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #fff;
+            white-space: nowrap;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(255, 0, 110, 0.5);
+        }
+
+        body.theme-white .running-notice {
+            box-shadow: 0 4px 20px rgba(255, 0, 110, 0.3);
+        }
+
+        .running-notice-text {
+            display: inline-block;
+            animation: scroll-left 20s linear infinite;
+            padding-left: 100%;
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-100%); }
+        }
+
+        /* ===== HAMBURGER - ONLY 3 LINES, NO BOX ===== */
+        .hamburger-btn {
+            position: fixed;
+            left: 20px;
+            top: 120px;
+            background: transparent;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1400;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0;
+            width: 40px;
+            height: 40px;
+        }
+
+        .hamburger-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .hamburger-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Hide hamburger when sidebar is open */
+        .hamburger-btn.hidden {
+            opacity: 0;
+            pointer-events: none;
+            transform: scale(0.8);
+        }
+
+        .hamburger-lines {
+            width: 28px;
+            height: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .hamburger-lines span {
+            display: block;
+            height: 3px;
+            background: var(--primary-gradient);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 12px var(--primary-color);
+        }
+
+        /* ===== SIDEBAR - GLASSY TRANSPARENT ===== */
+        .sidebar-drawer {
+            position: fixed;
+            left: 20px;
+            top: 70px;
+            width: 340px;
+            max-width: calc(100% - 40px);
+            height: calc(100vh - 90px);
+            background: var(--card-bg);
+            backdrop-filter: blur(25px) saturate(180%);
+            -webkit-backdrop-filter: blur(25px) saturate(180%);
+            border-radius: 20px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 60px var(--glass-shadow);
+            padding: 20px;
+            transform: translateX(-110%) scale(0.95);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1300;
+            overflow-y: auto;
+        }
+
+        .sidebar-drawer::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .sidebar-drawer::-webkit-scrollbar-track {
+            background: var(--hover-bg);
+            border-radius: 3px;
+        }
+
+        .sidebar-drawer::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 3px;
+        }
+
+        .sidebar-drawer::-webkit-scrollbar-thumb:hover {
+            opacity: 0.8;
+        }
+
+        .sidebar-drawer.open {
+            transform: translateX(0) scale(1);
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .sidebar-title-block {
+            padding: 8px 0 16px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 16px;
+        }
+
+        .sidebar-app-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+        }
+
+        .sidebar-app-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .sidebar-section-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            padding: 16px 8px 8px;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 12px 0;
+        }
+
+        .sidebar-menu li {
+            margin: 4px 0;
+        }
+
+        .sidebar-menu a {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 14px;
+            border-radius: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sidebar-menu a::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 4px;
+            height: 100%;
+            background: var(--primary-gradient);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-menu a:hover {
+            background: var(--hover-bg);
+            transform: translateX(4px);
+        }
+
+        .sidebar-menu a:hover::before {
+            transform: scaleY(1);
+        }
+
+        .sidebar-menu a .icon {
+            width: 24px;
+            text-align: center;
+            font-size: 1.2rem;
+            filter: drop-shadow(0 0 8px var(--primary-color));
+        }
+
+        .admin-contact {
+            padding: 16px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 16px;
+            font-size: 0.88rem;
+            background: var(--hover-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .admin-contact .name {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .admin-contact a {
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .admin-contact a:hover {
+            color: var(--primary-color);
+        }
+
+        /* ===== LAYOUT ===== */
+        .layout {
+            min-height: calc(100vh - 200px);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ===== MAIN CONTENT ===== */
+        .main-content {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 32px 28px;
+            position: relative;
+        }
+
+        /* ===== HOME SECTION ===== */
+        .home-section {
+            animation: fadeIn 0.6s ease;
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ===== INFO SECTION ===== */
+        .info-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            padding: 40px;
+            margin: 48px 0;
+            box-shadow: var(--glass-shadow);
+            transition: all 0.4s ease;
+        }
+
+        .info-section h2 {
+            color: var(--text-primary);
+            font-size: 2.2rem;
+            margin-bottom: 24px;
+            text-align: center;
+            font-weight: 800;
+            letter-spacing: -0.01em;
+        }
+
+        .info-section h3 {
+            color: var(--primary-color);
+            font-size: 1.5rem;
+            margin-top: 32px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 700;
+            text-shadow: 0 0 20px var(--primary-color);
+        }
+
+        .info-section p {
+            line-height: 1.8;
+            margin-bottom: 20px;
+            color: var(--text-secondary);
+            text-align: justify;
+            font-size: 1rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .info-card {
+            background: var(--hover-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            padding: 24px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 16px 48px var(--glass-shadow);
+            border-color: var(--primary-color);
+        }
+
+        .info-card h4 {
+            color: var(--text-primary);
+            font-size: 1.15rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .info-card ul {
+            list-style-position: inside;
+            margin-left: 8px;
+        }
+
+        .info-card li {
+            margin-bottom: 10px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+
+        .stat-box {
+            background: var(--hover-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--border-color);
+            padding: 28px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: var(--glass-shadow);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--primary-gradient);
+        }
+
+        .stat-box:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 20px 60px var(--glass-shadow);
+            border-color: var(--primary-color);
+        }
+
+        .stat-box .number {
+            font-size: 3rem;
+            font-weight: 800;
+            display: block;
+            margin-bottom: 8px;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 30px var(--primary-color);
+        }
+
+        .stat-box .label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .highlight-box {
+            background: var(--hover-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-left: 5px solid var(--accent-color);
+            padding: 24px;
+            margin: 28px 0;
+            border-radius: 12px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        .highlight-box strong {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 1.15rem;
+        }
+
+        /* ===== MODALS - GLASSY TRANSPARENT ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            overflow: auto;
+        }
+
+        body.theme-white .modal {
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal.open {
+            display: block;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            backdrop-filter: blur(40px) saturate(180%);
+            -webkit-backdrop-filter: blur(40px) saturate(180%);
+            margin: 3% auto;
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            width: 92%;
+            max-width: 760px;
+            box-shadow: 0 20px 80px var(--glass-shadow);
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-40px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-content h2 {
+            background: var(--primary-gradient);
+            color: #000;
+            padding: 24px 28px;
+            margin: 0;
+            border-radius: 24px 24px 0 0;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        body.theme-white .modal-content h2,
+        body.theme-eyecare .modal-content h2 {
+            color: #fff;
+        }
+
+        .modal-body {
+            padding: 28px;
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+
+        .modal-body::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-body::-webkit-scrollbar-track {
+            background: var(--hover-bg);
+            border-radius: 4px;
+        }
+
+        .modal-body::-webkit-scrollbar-thumb {
+            background: var(--primary-gradient);
+            border-radius: 4px;
+        }
+
+        .modal-body h3 {
+            color: var(--primary-color);
+            font-size: 1.15rem;
+            margin-top: 16px;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .modal-body p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+
+        .modal-body ul {
+            margin-left: 20px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .modal-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 20px;
+            padding: 16px;
+            background: var(--hover-bg);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .modal-row label {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 1rem;
+            flex: 1;
+        }
+
+        .modal-row .control {
+            flex: 0 0 auto;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            padding: 20px 28px;
+            border-top: 1px solid var(--border-color);
+            background: var(--hover-bg);
+            border-radius: 0 0 24px 24px;
+        }
+
+        /* ===== BUTTONS ===== */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary {
+            background: var(--primary-gradient);
+            color: #000;
+            box-shadow: 0 4px 20px var(--glass-shadow);
+            font-weight: 700;
+        }
+
+        body.theme-white .btn-primary,
+        body.theme-eyecare .btn-primary {
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px var(--glass-shadow);
+        }
+
+        .btn-outline {
+            background: var(--hover-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .btn-outline:hover {
+            background: var(--glass-hover);
+            transform: translateY(-2px);
+            border-color: var(--primary-color);
+        }
+
+        /* ===== FORM CONTROLS ===== */
+        .slider {
+            width: 200px;
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+            background: var(--hover-bg);
+            border: 1px solid var(--border-color);
+        }
+
+        .slider::-webkit-slider-thumb {
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        .slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-color);
+            border: none;
+        }
+
+        select.control {
+            padding: 10px 16px;
+            border-radius: 10px;
+            background: var(--hover-bg);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+
+        select.control:hover {
+            border-color: var(--primary-color);
+            background: var(--glass-hover);
+        }
+
+        select.control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 10px var(--primary-color);
+        }
+
+        select.control option {
+            background: var(--bg-color);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            background: var(--card-bg);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border-top: 1px solid var(--border-color);
+            padding: 20px 28px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 32px;
+            border-radius: 20px;
+            box-shadow: var(--glass-shadow);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 960px) {
+            .main-content {
+                padding: 24px 16px;
+            }
+
+            .sidebar-drawer {
+                left: 12px;
+                top: 70px;
+                width: calc(100% - 24px);
+            }
+
+            .hamburger-btn {
+                left: 12px;
+                top: 100px;
+            }
+
+            .app-header {
+                padding: 20px 16px;
+            }
+
+            .app-title {
+                font-size: 1.6rem;
+            }
+
+            .app-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .info-section h2 {
+                font-size: 1.75rem;
+            }
+
+            .info-section h3 {
+                font-size: 1.25rem;
+            }
+
+            .stat-box .number {
+                font-size: 2.25rem;
+            }
+
+            .info-section {
+                padding: 28px 20px;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .gov-topbar {
+                padding: 8px 16px;
+            }
+
+            .gov-topbar-right {
+                display: none;
+            }
+
+            .app-title {
+                font-size: 1.3rem;
+            }
+
+            .stat-box {
+                padding: 20px;
+            }
+
+            .modal-row {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .modal-row .control {
+                width: 100%;
+            }
+
+            select.control {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body class="theme-black">
+    <!-- Hamburger Button - Only 3 Lines -->
+    <button id="hamburgerBtn" class="hamburger-btn" aria-expanded="false" aria-controls="sidebarDrawer" aria-label="Toggle navigation">
+        <span class="hamburger-lines" aria-hidden="true">
+            <span></span><span></span><span></span>
+        </span>
+    </button>
+
+    <!-- Top Bar -->
+    <div class="gov-topbar" role="banner">
+        <div class="gov-topbar-left">
+            <div class="gov-emblem">
+                <img src="image.jpg" alt="Student of India Emblem">
+            </div>
+            <div class="gov-topbar-text">
+                <span>Student of India</span>
+                <span>Health and Family Welfare</span>
+            </div>
+        </div>
+        <div class="gov-topbar-right">Cardiology AI Pilot – Internal Use Only</div>
+    </div>
+
+    <!-- Header -->
+    <div class="app-header" role="region" aria-label="Application header">
+        <div class="app-header-content">
+            <div class="app-title">Cardiology AI – Heart Analysis Dashboard</div>
+            <div class="app-subtitle">Advanced imaging analytics for cardiac assessment – Demonstration Environment</div>
+        </div>
+    </div>
+
+    <!-- Running Notice -->
+    <div class="running-notice" role="status" aria-live="polite">
+        <div class="running-notice-text">⚠️ NOTICE: Heart organ is updated — this is a demonstration prototype (Non-clinical). Future updates will include additional organs and functionality. ⚠️</div>
+    </div>
+
+    <div class="layout" role="main">
+        <!-- Sidebar Drawer -->
+        <aside id="sidebarDrawer" class="sidebar-drawer" aria-hidden="true">
+            <div class="sidebar-title-block">
+                <div class="sidebar-app-name">Heart Imaging Console</div>
+                <div class="sidebar-app-desc">AI-assisted cardiac metrics and volumetric analysis</div>
+            </div>
+
+            <div class="sidebar-section-label">Navigation</div>
+            <ul class="sidebar-menu" aria-label="primary navigation">
+                <li><a href="#" onclick="closeSidebar(); return false;"><span class="icon">🏠</span><span>Home</span></a></li>
+            </ul>
+
+            <div class="sidebar-section-label">3D Heart Models</div>
+            <ul class="sidebar-menu" aria-label="3D heart models">
+                <li><a href="heart3d.html" target="_blank" rel="noopener"><span class="icon">🫀</span><span>3D Heart</span></a></li>
+                <li><a href="heartparts.html" target="_blank" rel="noopener"><span class="icon">🔬</span><span>3D Heart Parts</span></a></li>
+            </ul>
+
+            <div class="sidebar-section-label">Analyze</div>
+            <ul class="sidebar-menu" aria-label="analyze">
+                <li><a href="http://localhost:8000" target="_blank" rel="noopener"><span class="icon">🔬</span><span>CT/MRI Scan Analyze</span></a></li>
+                <li><a href="heart.html#" target="_blank" rel="noopener"><span class="icon">📁</span><span>Scan Repository</span></a></li>
+            </ul>
+
+            <div class="sidebar-section-label">Heart Diseases</div>
+            <ul class="sidebar-menu" aria-label="heart diseases">
+                <li><a href="allheartdiseases.html" target="_blank" rel="noopener"><span class="icon">📚</span><span>All Heart Diseases</span></a></li>
+            </ul>
+
+            <div class="sidebar-section-label">Administration</div>
+            <ul class="sidebar-menu" aria-label="administration">
+                <li><a href="#" onclick="openSettingsModal(); return false;"><span class="icon">⚙️</span><span>System Settings</span></a></li>
+                <li><a href="#" onclick="openAboutModal(); return false;"><span class="icon">ℹ️</span><span>About the Prototype</span></a></li>
+            </ul>
+
+            <div class="admin-contact" aria-label="admin contact">
+                <div class="name">Admin: SURESHKUMAR S</div>
+                <div style="margin-bottom:8px;">Mobile: <a href="tel:+918925427760">8925427760</a></div>
+                <div>Email: <a href="mailto:ssureshkxmar@gmail.com">ssureshkxmar@gmail.com</a></div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <!-- HOME SECTION ONLY -->
+            <section id="homeSection" class="home-section" aria-labelledby="homeHeading">
+                <div class="info-section">
+                    <h2 id="homeHeading">🫀 The Human Heart: A Comprehensive Overview</h2>
+
+                    <div class="stats-container">
+                        <div class="stat-box">
+                            <span class="number">100,000</span>
+                            <span class="label">Beats per Day</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="number">2.5B</span>
+                            <span class="label">Beats in Lifetime</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="number">5L</span>
+                            <span class="label">Blood Pumped/Min</span>
+                        </div>
+                        <div class="stat-box">
+                            <span class="number">300g</span>
+                            <span class="label">Average Weight</span>
+                        </div>
+                    </div>
+
+                    <h3>🔬 Anatomy and Structure</h3>
+                    <p>
+                        The human heart is a remarkable muscular organ approximately the size of a closed fist, weighing between 250-350 grams in adults. 
+                        Located in the mediastinum of the thoracic cavity, slightly left of the body's midline, it serves as the central pump of the 
+                        cardiovascular system. The heart consists of four chambers: two upper atria (right and left) and two lower ventricles (right and left), 
+                        separated by a muscular wall called the septum.
+                    </p>
+
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h4>🔴 Right Atrium</h4>
+                            <ul>
+                                <li>Receives deoxygenated blood from body</li>
+                                <li>Contains sinoatrial (SA) node</li>
+                                <li>Connects to right ventricle via tricuspid valve</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>🔵 Right Ventricle</h4>
+                            <ul>
+                                <li>Pumps blood to lungs via pulmonary artery</li>
+                                <li>Thinner muscular walls than left ventricle</li>
+                                <li>Pulmonary valve prevents backflow</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>🔴 Left Atrium</h4>
+                            <ul>
+                                <li>Receives oxygenated blood from lungs</li>
+                                <li>Connects to left ventricle via mitral valve</li>
+                                <li>Maintains pressure for efficient filling</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>🔵 Left Ventricle</h4>
+                            <ul>
+                                <li>Strongest chamber - pumps to entire body</li>
+                                <li>Thickest muscular walls (8-12mm)</li>
+                                <li>Aortic valve controls blood flow to aorta</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>💓 The Cardiac Cycle:</strong> Each heartbeat consists of two phases - systole (contraction) and diastole (relaxation). 
+                        During systole, ventricles contract to pump blood out of the heart. During diastole, chambers relax and fill with blood. 
+                        This cycle repeats approximately 100,000 times per day, pumping about 7,570 liters of blood daily.
+                    </div>
+
+                    <h3>🩺 Cardiovascular Health</h3>
+                    <p>
+                        Maintaining heart health is crucial for overall well-being. The heart's remarkable endurance and efficiency depend on proper 
+                        nutrition, regular exercise, stress management, and avoiding harmful habits like smoking. Regular cardiovascular check-ups 
+                        and monitoring of blood pressure, cholesterol levels, and heart rate are essential preventive measures.
+                    </p>
+
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <h4>💪 Exercise Benefits</h4>
+                            <ul>
+                                <li>Strengthens cardiac muscle</li>
+                                <li>Improves circulation and oxygen delivery</li>
+                                <li>Lowers blood pressure and cholesterol</li>
+                                <li>Reduces risk of heart disease by 35%</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>🥗 Nutritional Support</h4>
+                            <ul>
+                                <li>Omega-3 fatty acids for heart health</li>
+                                <li>Antioxidants reduce inflammation</li>
+                                <li>Fiber helps manage cholesterol</li>
+                                <li>Potassium regulates blood pressure</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>⚠️ Risk Factors</h4>
+                            <ul>
+                                <li>High blood pressure (hypertension)</li>
+                                <li>High cholesterol levels</li>
+                                <li>Diabetes and obesity</li>
+                                <li>Smoking and excessive alcohol</li>
+                            </ul>
+                        </div>
+                        <div class="info-card">
+                            <h4>🛡️ Prevention Tips</h4>
+                            <ul>
+                                <li>30+ minutes daily exercise</li>
+                                <li>Mediterranean or heart-healthy diet</li>
+                                <li>Stress reduction techniques</li>
+                                <li>Regular health screenings</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="footer">
+                © 2024 Cardiology AI Prototype | Developed by SURESHKUMAR S | For Educational and Research Purposes | 
+                Not for Clinical Diagnosis
+            </div>
+        </main>
+    </div>
+
+    <!-- Settings Modal - GLASSY TRANSPARENT -->
+    <div id="settingsModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="settingsModalTitle">
+        <div class="modal-content">
+            <h2 id="settingsModalTitle">⚙️ System Settings</h2>
+            <div class="modal-body">
+                <h3>🎨 Theme Selection</h3>
+                <div class="modal-row">
+                    <label for="themeSelect">Select Theme</label>
+                    <select id="themeSelect" class="control" onchange="changeTheme(this.value)">
+                        <option value="black">Black Theme (Default)</option>
+                        <option value="white">White Theme (Light)</option>
+                        <option value="eyecare">Eye Care Theme (Warm)</option>
+                    </select>
+                </div>
+
+                <h3>📝 Display Preferences</h3>
+                <div class="modal-row">
+                    <label for="fontScale">Font Size: <span id="fontScaleValue">100%</span></label>
+                    <input type="range" id="fontScale" class="slider control" min="0.8" max="1.4" step="0.1" value="1" oninput="adjustFontScale(this.value)">
+                </div>
+
+                <div class="modal-row">
+                    <label for="blurIntensity">Blur Intensity: <span id="blurValue">30px</span></label>
+                    <input type="range" id="blurIntensity" class="slider control" min="10" max="50" step="5" value="30" oninput="adjustBlur(this.value)">
+                </div>
+
+                <h3>🔬 Analysis Parameters</h3>
+                <div class="modal-row">
+                    <label for="aiConfidence">AI Confidence Threshold: <span id="aiValue">92%</span></label>
+                    <input type="range" id="aiConfidence" class="slider control" min="70" max="99" step="1" value="92" oninput="updateAIValue(this.value)">
+                </div>
+
+                <h3>🎯 Advanced Options</h3>
+                <div class="modal-row">
+                    <label for="animationSpeed">Animation Speed</label>
+                    <select id="animationSpeed" class="control">
+                        <option value="slow">Slow</option>
+                        <option value="normal" selected>Normal</option>
+                        <option value="fast">Fast</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="resetSettings()">Reset to Default</button>
+                <button class="btn btn-outline" onclick="closeSettingsModal()">Cancel</button>
+                <button class="btn btn-primary" onclick="saveSettings()">Apply Settings</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal - GLASSY TRANSPARENT -->
+    <div id="aboutModal" class="modal" aria-hidden="true" role="dialog" aria-labelledby="aboutModalTitle">
+        <div class="modal-content">
+            <h2 id="aboutModalTitle">ℹ️ About Cardiology AI</h2>
+            <div class="modal-body">
+                <h3>📋 Project Overview</h3>
+                <p>
+                    This is a demonstration prototype showcasing AI-assisted cardiac imaging analysis. It combines 
+                    advanced volumetric segmentation, functional parameter extraction, and interactive 3D visualization 
+                    to assist in cardiac assessment workflows.
+                </p>
+
+                <h3>💻 Technology Stack</h3>
+                <ul style="margin-left:20px; line-height:1.8;">
+                    <li>Deep Learning: U-Net based cardiac segmentation</li>
+                    <li>3D Rendering: Three.js with custom shaders</li>
+                    <li>DICOM Processing: Medical imaging standards compliance</li>
+                    <li>Frontend: Modern HTML5/CSS3/JavaScript</li>
+                    <li>Backend: Python with TensorFlow/PyTorch</li>
+                </ul>
+
+                <h3>✨ Key Features</h3>
+                <ul style="margin-left:20px; line-height:1.8;">
+                    <li>Real-time 3D heart visualization</li>
+                    <li>Automated chamber segmentation</li>
+                    <li>Volumetric analysis and measurements</li>
+                    <li>AI-powered abnormality detection</li>
+                    <li>Customizable themes (Black, White, Eye Care)</li>
+                    <li>Accessible design for all users</li>
+                </ul>
+
+                <h3>👨‍💻 Developer Information</h3>
+                <p>
+                    <strong>Name:</strong> SURESHKUMAR S<br/>
+                    <strong>Contact:</strong> 8925427760<br/>
+                    <strong>Email:</strong> ssureshkxmar@gmail.com<br/>
+                    <strong>Version:</strong> 3.5.0 (Prototype)<br/>
+                    <strong>Last Updated:</strong> December 2024
+                </p>
+
+                <h3>⚠️ Disclaimer</h3>
+                <p style="color:var(--text-muted); font-size:0.95rem; border-left:3px solid var(--accent-color); padding-left:16px; margin-top:16px; background: var(--hover-bg); padding: 16px; border-radius: 8px;">
+                    ⚠️ This application is a demonstration prototype for educational and research purposes only. 
+                    It is NOT intended for clinical diagnosis or treatment decisions. Always consult qualified 
+                    medical professionals for health-related concerns.
+                </p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="closeAboutModal()">Close</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Hamburger & Sidebar Toggle
+        const hamburgerBtn = document.getElementById('hamburgerBtn');
+        const sidebarDrawer = document.getElementById('sidebarDrawer');
+        let sidebarOpen = false;
+
+        function toggleSidebar() {
+            sidebarOpen = !sidebarOpen;
+            sidebarDrawer.classList.toggle('open', sidebarOpen);
+            
+            // Hide hamburger when sidebar is open
+            if (sidebarOpen) {
+                hamburgerBtn.classList.add('hidden');
+            } else {
+                hamburgerBtn.classList.remove('hidden');
+            }
+            
+            hamburgerBtn.setAttribute('aria-expanded', sidebarOpen);
+            sidebarDrawer.setAttribute('aria-hidden', !sidebarOpen);
+        }
+
+        function closeSidebar() {
+            if (sidebarOpen) {
+                toggleSidebar();
+            }
+        }
+
+        hamburgerBtn.addEventListener('click', toggleSidebar);
+
+        // Close sidebar when clicking outside
+        document.addEventListener('click', (e) => {
+            if (sidebarOpen && !sidebarDrawer.contains(e.target) && !hamburgerBtn.contains(e.target)) {
+                toggleSidebar();
+            }
+        });
+
+        // Modals
+        function openSettingsModal() {
+            document.getElementById('settingsModal').classList.add('open');
+            document.getElementById('settingsModal').setAttribute('aria-hidden', 'false');
+            if (sidebarOpen) toggleSidebar();
+        }
+
+        function closeSettingsModal() {
+            document.getElementById('settingsModal').classList.remove('open');
+            document.getElementById('settingsModal').setAttribute('aria-hidden', 'true');
+        }
+
+        function openAboutModal() {
+            document.getElementById('aboutModal').classList.add('open');
+            document.getElementById('aboutModal').setAttribute('aria-hidden', 'false');
+            if (sidebarOpen) toggleSidebar();
+        }
+
+        function closeAboutModal() {
+            document.getElementById('aboutModal').classList.remove('open');
+            document.getElementById('aboutModal').setAttribute('aria-hidden', 'true');
+        }
+
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('open');
+                e.target.setAttribute('aria-hidden', 'true');
+            }
+        });
+
+        // Settings Functions
+        function adjustFontScale(scale) {
+            document.documentElement.style.setProperty('--font-scale', scale);
+            document.getElementById('fontScaleValue').textContent = Math.round(scale * 100) + '%';
+        }
+
+        function adjustBlur(blur) {
+            document.documentElement.style.setProperty('--backdrop-blur', `blur(${blur}px)`);
+            document.getElementById('blurValue').textContent = blur + 'px';
+        }
+
+        function updateAIValue(value) {
+            document.getElementById('aiValue').textContent = value + '%';
+        }
+
+        function changeTheme(theme) {
+            // Remove all theme classes
+            document.body.classList.remove('theme-black', 'theme-white', 'theme-eyecare');
+            
+            // Add selected theme class
+            document.body.classList.add('theme-' + theme);
+            
+            // Update dropdown
+            document.getElementById('themeSelect').value = theme;
+            
+            // Save to localStorage
+            localStorage.setItem('selectedTheme', theme);
+            
+            console.log('Theme changed to:', theme);
+        }
+
+        function resetSettings() {
+            adjustFontScale(1);
+            adjustBlur(30);
+            document.getElementById('fontScale').value = 1;
+            document.getElementById('blurIntensity').value = 30;
+            document.getElementById('aiConfidence').value = 92;
+            document.getElementById('animationSpeed').value = 'normal';
+            
+            // Reset to black theme
+            changeTheme('black');
+            
+            // Clear localStorage
+            localStorage.removeItem('cardiologySettings');
+            localStorage.removeItem('selectedTheme');
+            
+            alert('✓ Settings reset to default!');
+        }
+
+        function saveSettings() {
+            // Save settings to localStorage
+            const settings = {
+                theme: document.getElementById('themeSelect').value,
+                fontScale: document.getElementById('fontScale').value,
+                blur: document.getElementById('blurIntensity').value,
+                aiConfidence: document.getElementById('aiConfidence').value,
+                animationSpeed: document.getElementById('animationSpeed').value
+            };
+            
+            localStorage.setItem('cardiologySettings', JSON.stringify(settings));
+            localStorage.setItem('selectedTheme', settings.theme);
+            
+            alert('✓ Settings saved successfully!');
+            closeSettingsModal();
+        }
+
+        // Load settings on page load
+        function loadSettings() {
+            // Load theme first
+            const savedTheme = localStorage.getItem('selectedTheme');
+            if (savedTheme) {
+                changeTheme(savedTheme);
+            }
+
+            // Load other settings
+            const saved = localStorage.getItem('cardiologySettings');
+            if (saved) {
+                const settings = JSON.parse(saved);
+                adjustFontScale(settings.fontScale);
+                adjustBlur(settings.blur);
+                document.getElementById('fontScale').value = settings.fontScale;
+                document.getElementById('blurIntensity').value = settings.blur;
+                document.getElementById('aiConfidence').value = settings.aiConfidence;
+                document.getElementById('animationSpeed').value = settings.animationSpeed;
+                updateAIValue(settings.aiConfidence);
+            }
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', () => {
+            loadSettings();
+            console.log('🫀 Cardiology AI Dashboard initialized - Student of India');
+            console.log('⚙️ Available themes: Black, White, Eye Care');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🫀 AI Heart Disease Analysis</title>
+
+<style>
+/* ================= RESET ================= */
+*{margin:0;padding:0;box-sizing:border-box}
+
+/* ================= THEME (MATCH allheartdiseases.html) ================= */
+:root{
+  --glass-bg: rgba(0,0,0,0.75);
+  --glass-border: rgba(255,255,255,0.1);
+  --glass-shadow: 0 12px 40px rgba(0,0,0,0.6);
+  --glass-hover: rgba(255,255,255,0.08);
+  --primary-gradient: linear-gradient(135deg,#00d4ff,#0099ff);
+  --danger-gradient: linear-gradient(135deg,#ff006e,#ff4d4d);
+  --success-gradient: linear-gradient(135deg,#06ffa5,#00d4ff);
+  --text-primary: rgba(255,255,255,0.95);
+  --text-secondary: rgba(255,255,255,0.7);
+  --text-muted: rgba(255,255,255,0.5);
+  --blur: blur(20px);
+}
+
+/* ================= BODY ================= */
+body{
+  font-family: Inter,Segoe UI,sans-serif;
+  background:#000;
+  min-height:100vh;
+  padding: 24px;
+  padding-top: 40px;
+  color:var(--text-primary);
+}
+
+/* ================= CONTAINER ================= */
+.container{
+  max-width:900px;
+  margin:auto;
+  background:var(--glass-bg);
+  backdrop-filter:var(--blur);
+  border:1px solid var(--glass-border);
+  border-radius:26px;
+  padding:40px;
+  box-shadow:var(--glass-shadow);
+}
+
+/* ================= HEADERS ================= */
+h1{
+  text-align:center;
+  font-size:2.1rem;
+  font-weight:700;
+  background:linear-gradient(135deg,#fff,#00d4ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+.subtitle{
+  text-align:center;
+  color:var(--text-secondary);
+  margin:14px 0 36px;
+}
+
+/* ================= SECTIONS ================= */
+.section{
+  background:var(--glass-bg);
+  border:1px solid var(--glass-border);
+  border-radius:20px;
+  padding:26px;
+  margin-bottom:30px;
+  box-shadow:var(--glass-shadow);
+}
+
+.section h2{
+  font-size:1.4rem;
+  color:#00d4ff;
+  margin-bottom:22px;
+}
+
+/* ================= FORM ================= */
+.form-group{margin-bottom:20px}
+
+label{
+  display:block;
+  margin-bottom:8px;
+  font-weight:600;
+  color:var(--text-primary);
+}
+
+input,select,textarea{
+  width:100%;
+  padding:14px;
+  border-radius:12px;
+  border:1px solid var(--glass-border);
+  background:rgba(0,0,0,0.6);
+  color:var(--text-primary);
+  font-size:1rem;
+  transition:.3s;
+}
+
+input:focus,select:focus,textarea:focus{
+  outline:none;
+  border-color:#00d4ff;
+  box-shadow:0 0 0 3px rgba(0,212,255,0.2);
+}
+
+/* ================= FILE INPUT ================= */
+.file-input-wrapper{position:relative}
+
+.file-input-wrapper input[type=file]{display:none}
+
+.file-input-label{
+  display:block;
+  padding:18px;
+  border-radius:14px;
+  border:2px dashed rgba(0,212,255,0.5);
+  text-align:center;
+  cursor:pointer;
+  background:rgba(0,0,0,0.6);
+  transition:.3s;
+}
+
+.file-input-label:hover{
+  background:var(--glass-hover);
+  border-color:#00d4ff;
+}
+
+.file-name{
+  margin-top:10px;
+  font-size:.9rem;
+  color:#06ffa5;
+}
+
+.note,.file-types{
+  font-size:.8rem;
+  color:var(--text-muted);
+  margin-top:6px;
+}
+
+/* ================= BUTTON ================= */
+.submit-btn{
+  width:100%;
+  margin-top:20px;
+  padding:18px;
+  font-size:1.3rem;
+  font-weight:700;
+  border-radius:14px;
+  border:none;
+  cursor:pointer;
+  background:var(--primary-gradient);
+  color:#000;
+  transition:.3s;
+}
+
+.submit-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 30px rgba(0,212,255,0.4);
+}
+
+.submit-btn:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+/* ================= LOADING OVERLAY ================= */
+.loading-overlay{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.9);
+  backdrop-filter:blur(10px);
+  z-index:9999;
+  justify-content:center;
+  align-items:center;
+}
+
+.loading-content{text-align:center}
+
+.spinner{
+  width:80px;
+  height:80px;
+  border:8px solid rgba(255,255,255,.2);
+  border-top:8px solid #00d4ff;
+  border-radius:50%;
+  animation:spin 1s linear infinite;
+  margin:auto;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.loading-text{margin-top:18px;font-size:1.4rem}
+.loading-subtext{color:var(--text-secondary);margin-top:8px}
+
+.required{color:#ff4d4d}
+
+        /* TOP GOV HEADER */
+        .gov-topbar {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 10px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1200;
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .gov-topbar-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .gov-emblem {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            background: #000000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gov-emblem img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: brightness(1.1) contrast(1.2) drop-shadow(0 0 10px rgba(218, 165, 32, 0.6));
+            mix-blend-mode: screen;
+        }
+
+        .gov-topbar-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .gov-topbar-text span:first-child {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        .gov-topbar-text span:last-child {
+            font-size: 1rem;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .gov-topbar-right {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* APP HEADER BAND */
+        .app-header {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: var(--backdrop-blur);
+            -webkit-backdrop-filter: var(--backdrop-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-button:hover {
+            background: var(--glass-hover);
+            transform: translateX(-4px);
+            border-color: rgba(0, 212, 255, 0.5);
+        }
+
+        .app-header-content {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .app-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.01em;
+            background: linear-gradient(135deg, #fff 0%, #00d4ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .app-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        @media(max-width:768px){
+            .gov-topbar {
+                padding: 8px 16px;
+            }
+
+            .gov-emblem {
+                width: 40px;
+                height: 40px;
+            }
+
+            .gov-topbar-text span:last-child {
+                font-size: 0.85rem;
+            }
+
+            .gov-topbar-right {
+                display: none;
+            }
+
+            .app-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+                padding: 16px;
+            }
+        }
+</style>
+</head>
+
+<body>
+
+    <!-- TOP GOV HEADER -->
+    <div class="gov-topbar">
+        <div class="gov-topbar-left">
+            <div class="gov-emblem">
+                <img src="image.jpg" alt="Student of India Emblem">
+            </div>
+            <div class="gov-topbar-text">
+                <span>Student of India</span>
+                <span>Health and Family Welfare</span>
+            </div>
+        </div>
+        <div class="gov-topbar-right">
+            Cardiology AI | Pilot | Internal Use Only
+        </div>
+    </div>
+
+    <!-- APP HEADER BAND -->
+    <div class="app-header">
+        <div class="app-header-left">
+            <a href="heart.html" class="back-button">
+                <span>←</span>
+                <span>Back</span>
+            </a>
+            <div class="app-header-content">
+                <span class="app-title">🫀 AI Heart Disease Analysis</span>
+                <span class="app-subtitle">Advanced medical imaging analysis with AI-powered diagnostics</span>
+            </div>
+        </div>
+    </div>
+
+
+
+<div class="container">
+  <h1>🫀 AI Heart Disease Analysis</h1>
+  <p class="subtitle">Upload medical imaging & patient details</p>
+
+  <form id="analysisForm">
+
+    <!-- MEDICAL IMAGING -->
+    <div class="section">
+      <h2>📊 Medical Imaging</h2>
+
+      <div class="form-group">
+        <label>CT / MRI Heart Scan <span class="required">*</span></label>
+        <div class="file-input-wrapper">
+          <input type="file" id="ctMriFile" name="ct_mri_file" accept=".nii,.nii.gz" required>
+          <label for="ctMriFile" class="file-input-label">
+            📁 Select NIfTI Scan (.nii / .nii.gz)
+            <div id="ctMriFileName" class="file-name"></div>
+          </label>
+        </div>
+        <p class="note">Mandatory – NIfTI format only</p>
+      </div>
+
+      <div class="form-group">
+        <label>ECG Report (optional)</label>
+        <div class="file-input-wrapper">
+          <input type="file" id="ecgFile" name="ecg_file">
+          <label for="ecgFile" class="file-input-label">
+            📈 Upload ECG Report
+            <div id="ecgFileName" class="file-name"></div>
+          </label>
+        </div>
+        <p class="file-types">PDF / Image / Excel / CSV</p>
+      </div>
+
+      <div class="form-group">
+        <label>Blood Test Report (optional)</label>
+        <div class="file-input-wrapper">
+          <input type="file" id="bloodTestFile" name="blood_test_file">
+          <label for="bloodTestFile" class="file-input-label">
+            🩸 Upload Blood Test
+            <div id="bloodTestFileName" class="file-name"></div>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>ECHO Report (optional)</label>
+        <div class="file-input-wrapper">
+          <input type="file" id="echoFile" name="echo_file">
+          <label for="echoFile" class="file-input-label">
+            🔊 Upload ECHO Report
+            <div id="echoFileName" class="file-name"></div>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- PATIENT INFO -->
+    <div class="section">
+      <h2>👤 Patient Information</h2>
+
+      <div class="form-group">
+        <label>Patient Name <span class="required">*</span></label>
+        <input type="text" id="patientName" name="patient_name" required>
+      </div>
+
+      <div class="form-group">
+        <label>Age <span class="required">*</span></label>
+        <input type="number" id="patientAge" name="patient_age" required>
+      </div>
+
+      <div class="form-group">
+        <label>Sex <span class="required">*</span></label>
+        <select id="patientSex" name="patient_sex" required>
+          <option value="">Select</option>
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Symptoms / Medical History</label>
+        <textarea id="patientNotes" name="patient_notes" rows="4"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="submit-btn" id="submitBtn">
+      🚀 Run AI Analysis
+    </button>
+
+  </form>
+</div>
+
+<!-- LOADING -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-content">
+    <div class="spinner"></div>
+    <div class="loading-text">Processing AI Analysis</div>
+    <div class="loading-subtext">Please wait 10–30 seconds</div>
+  </div>
+</div>
+
+<!-- ================= JAVASCRIPT (UNCHANGED) ================= -->
+<script>
+/* ORIGINAL JS – NOT MODIFIED */
+const fileInputs=[
+{input:'ctMriFile',display:'ctMriFileName',types:['.nii','.nii.gz']},
+{input:'ecgFile',display:'ecgFileName',types:['.pdf','.jpg','.jpeg','.png','.xls','.xlsx','.csv']},
+{input:'bloodTestFile',display:'bloodTestFileName',types:['.pdf','.jpg','.jpeg','.png','.xls','.xlsx','.csv']},
+{input:'echoFile',display:'echoFileName',types:['.pdf','.jpg','.jpeg','.png']}
+];
+
+fileInputs.forEach(({input,display,types})=>{
+document.getElementById(input).addEventListener('change',e=>{
+const file=e.target.files[0];
+if(!file){document.getElementById(display).textContent='';return;}
+const name=file.name.toLowerCase();
+const ext='.'+name.split('.').pop();
+const isNiiGz=name.endsWith('.nii.gz');
+if(!types.some(t=>isNiiGz?t==='.nii.gz':ext===t)){
+alert('Invalid file type');
+e.target.value='';
+document.getElementById(display).textContent='';
+return;
+}
+document.getElementById(display).innerHTML=`✓ ${file.name}`;
+});
+});
+
+document.getElementById('analysisForm').addEventListener('submit',async e=>{
+e.preventDefault();
+document.getElementById('loadingOverlay').style.display='flex';
+document.getElementById('submitBtn').disabled=true;
+
+try{
+const formData=new FormData();
+formData.append('ct_mri_file',ctMriFile.files[0]);
+formData.append('patient_name',patientName.value);
+formData.append('patient_age',patientAge.value);
+formData.append('patient_sex',patientSex.value);
+formData.append('patient_notes',patientNotes.value||'');
+
+if(ecgFile.files[0])formData.append('ecg_file',ecgFile.files[0]);
+if(bloodTestFile.files[0])formData.append('blood_test_file',bloodTestFile.files[0]);
+if(echoFile.files[0])formData.append('echo_file',echoFile.files[0]);
+
+const res=await fetch('http://localhost:8000/api/analyze-heart',{method:'POST',body:formData});
+if(!res.ok)throw new Error(await res.text());
+
+const result=await res.json();
+sessionStorage.setItem('analysisResult',JSON.stringify(result));
+window.location.href='/result.html';
+
+}catch(err){
+alert('Analysis error: '+err.message);
+document.getElementById('loadingOverlay').style.display='none';
+document.getElementById('submitBtn').disabled=false;
+}
+});
+</script>
+
+</body>
+</html>
