@@ -5,9 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>🫀 AI Heart Disease Analysis</title>
 
+
 <style>
 /* ================= RESET ================= */
 *{margin:0;padding:0;box-sizing:border-box}
+
 
 /* ================= THEME (MATCH allheartdiseases.html) ================= */
 :root{
@@ -24,6 +26,7 @@
   --blur: blur(20px);
 }
 
+
 /* ================= BODY ================= */
 body{
   font-family: Inter,Segoe UI,sans-serif;
@@ -33,6 +36,7 @@ body{
   padding-top: 40px;
   color:var(--text-primary);
 }
+
 
 /* ================= CONTAINER ================= */
 .container{
@@ -46,6 +50,7 @@ body{
   box-shadow:var(--glass-shadow);
 }
 
+
 /* ================= HEADERS ================= */
 h1{
   text-align:center;
@@ -56,11 +61,13 @@ h1{
   -webkit-text-fill-color:transparent;
 }
 
+
 .subtitle{
   text-align:center;
   color:var(--text-secondary);
   margin:14px 0 36px;
 }
+
 
 /* ================= SECTIONS ================= */
 .section{
@@ -72,14 +79,17 @@ h1{
   box-shadow:var(--glass-shadow);
 }
 
+
 .section h2{
   font-size:1.4rem;
   color:#00d4ff;
   margin-bottom:22px;
 }
 
+
 /* ================= FORM ================= */
 .form-group{margin-bottom:20px}
+
 
 label{
   display:block;
@@ -87,6 +97,7 @@ label{
   font-weight:600;
   color:var(--text-primary);
 }
+
 
 input,select,textarea{
   width:100%;
@@ -99,16 +110,20 @@ input,select,textarea{
   transition:.3s;
 }
 
+
 input:focus,select:focus,textarea:focus{
   outline:none;
   border-color:#00d4ff;
   box-shadow:0 0 0 3px rgba(0,212,255,0.2);
 }
 
+
 /* ================= FILE INPUT ================= */
 .file-input-wrapper{position:relative}
 
+
 .file-input-wrapper input[type=file]{display:none}
+
 
 .file-input-label{
   display:block;
@@ -121,10 +136,12 @@ input:focus,select:focus,textarea:focus{
   transition:.3s;
 }
 
+
 .file-input-label:hover{
   background:var(--glass-hover);
   border-color:#00d4ff;
 }
+
 
 .file-name{
   margin-top:10px;
@@ -132,11 +149,13 @@ input:focus,select:focus,textarea:focus{
   color:#06ffa5;
 }
 
+
 .note,.file-types{
   font-size:.8rem;
   color:var(--text-muted);
   margin-top:6px;
 }
+
 
 /* ================= BUTTON ================= */
 .submit-btn{
@@ -153,15 +172,18 @@ input:focus,select:focus,textarea:focus{
   transition:.3s;
 }
 
+
 .submit-btn:hover{
   transform:translateY(-2px);
   box-shadow:0 10px 30px rgba(0,212,255,0.4);
 }
 
+
 .submit-btn:disabled{
   opacity:.5;
   cursor:not-allowed;
 }
+
 
 /* ================= LOADING OVERLAY ================= */
 .loading-overlay{
@@ -175,7 +197,9 @@ input:focus,select:focus,textarea:focus{
   align-items:center;
 }
 
+
 .loading-content{text-align:center}
+
 
 .spinner{
   width:80px;
@@ -187,14 +211,18 @@ input:focus,select:focus,textarea:focus{
   margin:auto;
 }
 
+
 @keyframes spin{
   to{transform:rotate(360deg)}
 }
 
+
 .loading-text{margin-top:18px;font-size:1.4rem}
 .loading-subtext{color:var(--text-secondary);margin-top:8px}
 
+
 .required{color:#ff4d4d}
+
 
         /* TOP GOV HEADER */
         .gov-topbar {
@@ -212,11 +240,13 @@ input:focus,select:focus,textarea:focus{
             box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
         }
 
+
         .gov-topbar-left {
             display: flex;
             align-items: center;
             gap: 14px;
         }
+
 
         .gov-emblem {
             width: 50px;
@@ -231,6 +261,7 @@ input:focus,select:focus,textarea:focus{
             overflow: hidden;
         }
 
+
         .gov-emblem img {
             width: 100%;
             height: 100%;
@@ -239,10 +270,12 @@ input:focus,select:focus,textarea:focus{
             mix-blend-mode: screen;
         }
 
+
         .gov-topbar-text {
             display: flex;
             flex-direction: column;
         }
+
 
         .gov-topbar-text span:first-child {
             font-size: 0.7rem;
@@ -251,6 +284,7 @@ input:focus,select:focus,textarea:focus{
             color: var(--text-muted);
             font-weight: 600;
         }
+
 
         .gov-topbar-text span:last-child {
             font-size: 1rem;
@@ -261,11 +295,13 @@ input:focus,select:focus,textarea:focus{
             background-clip: text;
         }
 
+
         .gov-topbar-right {
             font-size: 0.85rem;
             color: var(--text-secondary);
             font-weight: 500;
         }
+
 
         /* APP HEADER BAND */
         .app-header {
@@ -281,6 +317,7 @@ input:focus,select:focus,textarea:focus{
             overflow: hidden;
         }
 
+
         .app-header-left {
             display: flex;
             align-items: center;
@@ -288,6 +325,7 @@ input:focus,select:focus,textarea:focus{
             position: relative;
             z-index: 1;
         }
+
 
         .back-button {
             display: inline-flex;
@@ -304,7 +342,9 @@ input:focus,select:focus,textarea:focus{
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            text-decoration: none;
         }
+
 
         .back-button:hover {
             background: var(--glass-hover);
@@ -312,10 +352,12 @@ input:focus,select:focus,textarea:focus{
             border-color: rgba(0, 212, 255, 0.5);
         }
 
+
         .app-header-content {
             display: flex;
             flex-direction: column;
         }
+
 
         .app-title {
             font-size: 1.4rem;
@@ -327,29 +369,35 @@ input:focus,select:focus,textarea:focus{
             background-clip: text;
         }
 
+
         .app-subtitle {
             font-size: 0.85rem;
             color: var(--text-secondary);
             margin-top: 4px;
         }
 
+
         @media(max-width:768px){
             .gov-topbar {
                 padding: 8px 16px;
             }
+
 
             .gov-emblem {
                 width: 40px;
                 height: 40px;
             }
 
+
             .gov-topbar-text span:last-child {
                 font-size: 0.85rem;
             }
 
+
             .gov-topbar-right {
                 display: none;
             }
+
 
             .app-header {
                 flex-direction: column;
@@ -361,7 +409,9 @@ input:focus,select:focus,textarea:focus{
 </style>
 </head>
 
+
 <body>
+
 
     <!-- TOP GOV HEADER -->
     <div class="gov-topbar">
@@ -379,10 +429,11 @@ input:focus,select:focus,textarea:focus{
         </div>
     </div>
 
+
     <!-- APP HEADER BAND -->
     <div class="app-header">
         <div class="app-header-left">
-            <a href="heart.html" class="back-button">
+            <a href="https://ssureshkxmar.github.io/cardiology/heart.html" class="back-button">
                 <span>←</span>
                 <span>Back</span>
             </a>
@@ -395,15 +446,19 @@ input:focus,select:focus,textarea:focus{
 
 
 
+
 <div class="container">
   <h1>🫀 AI Heart Disease Analysis</h1>
   <p class="subtitle">Upload medical imaging & patient details</p>
 
+
   <form id="analysisForm">
+
 
     <!-- MEDICAL IMAGING -->
     <div class="section">
       <h2>📊 Medical Imaging</h2>
+
 
       <div class="form-group">
         <label>CT / MRI Heart Scan <span class="required">*</span></label>
@@ -417,6 +472,7 @@ input:focus,select:focus,textarea:focus{
         <p class="note">Mandatory – NIfTI format only</p>
       </div>
 
+
       <div class="form-group">
         <label>ECG Report (optional)</label>
         <div class="file-input-wrapper">
@@ -429,6 +485,7 @@ input:focus,select:focus,textarea:focus{
         <p class="file-types">PDF / Image / Excel / CSV</p>
       </div>
 
+
       <div class="form-group">
         <label>Blood Test Report (optional)</label>
         <div class="file-input-wrapper">
@@ -439,6 +496,7 @@ input:focus,select:focus,textarea:focus{
           </label>
         </div>
       </div>
+
 
       <div class="form-group">
         <label>ECHO Report (optional)</label>
@@ -452,19 +510,23 @@ input:focus,select:focus,textarea:focus{
       </div>
     </div>
 
+
     <!-- PATIENT INFO -->
     <div class="section">
       <h2>👤 Patient Information</h2>
+
 
       <div class="form-group">
         <label>Patient Name <span class="required">*</span></label>
         <input type="text" id="patientName" name="patient_name" required>
       </div>
 
+
       <div class="form-group">
         <label>Age <span class="required">*</span></label>
         <input type="number" id="patientAge" name="patient_age" required>
       </div>
+
 
       <div class="form-group">
         <label>Sex <span class="required">*</span></label>
@@ -476,18 +538,22 @@ input:focus,select:focus,textarea:focus{
         </select>
       </div>
 
+
       <div class="form-group">
         <label>Symptoms / Medical History</label>
         <textarea id="patientNotes" name="patient_notes" rows="4"></textarea>
       </div>
     </div>
 
+
     <button type="submit" class="submit-btn" id="submitBtn">
       🚀 Run AI Analysis
     </button>
 
+
   </form>
 </div>
+
 
 <!-- LOADING -->
 <div class="loading-overlay" id="loadingOverlay">
@@ -498,6 +564,7 @@ input:focus,select:focus,textarea:focus{
   </div>
 </div>
 
+
 <!-- ================= JAVASCRIPT (UNCHANGED) ================= -->
 <script>
 /* ORIGINAL JS – NOT MODIFIED */
@@ -507,6 +574,7 @@ const fileInputs=[
 {input:'bloodTestFile',display:'bloodTestFileName',types:['.pdf','.jpg','.jpeg','.png','.xls','.xlsx','.csv']},
 {input:'echoFile',display:'echoFileName',types:['.pdf','.jpg','.jpeg','.png']}
 ];
+
 
 fileInputs.forEach(({input,display,types})=>{
 document.getElementById(input).addEventListener('change',e=>{
@@ -525,10 +593,12 @@ document.getElementById(display).innerHTML=`✓ ${file.name}`;
 });
 });
 
+
 document.getElementById('analysisForm').addEventListener('submit',async e=>{
 e.preventDefault();
 document.getElementById('loadingOverlay').style.display='flex';
 document.getElementById('submitBtn').disabled=true;
+
 
 try{
 const formData=new FormData();
@@ -538,16 +608,20 @@ formData.append('patient_age',patientAge.value);
 formData.append('patient_sex',patientSex.value);
 formData.append('patient_notes',patientNotes.value||'');
 
+
 if(ecgFile.files[0])formData.append('ecg_file',ecgFile.files[0]);
 if(bloodTestFile.files[0])formData.append('blood_test_file',bloodTestFile.files[0]);
 if(echoFile.files[0])formData.append('echo_file',echoFile.files[0]);
 
+
 const res=await fetch('http://localhost:8000/api/analyze-heart',{method:'POST',body:formData});
 if(!res.ok)throw new Error(await res.text());
+
 
 const result=await res.json();
 sessionStorage.setItem('analysisResult',JSON.stringify(result));
 window.location.href='/result.html';
+
 
 }catch(err){
 alert('Analysis error: '+err.message);
@@ -556,6 +630,7 @@ document.getElementById('submitBtn').disabled=false;
 }
 });
 </script>
+
 
 </body>
 </html>
